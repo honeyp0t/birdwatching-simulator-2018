@@ -23,7 +23,6 @@ Whitebird.new = function(x, y)
         self.frameIndex = self.frameIndex + 1 * dt * 4
         self.frame = frames[(math.floor(self.frameIndex) % 2) + 1]
         self.posX = self.posX - (self.speedX * dt)
-
     end
 
     return self

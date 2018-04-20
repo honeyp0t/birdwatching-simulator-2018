@@ -2,19 +2,41 @@ require("Guy")
 require("Whitebird")
 
 cameraSound = love.audio.newSource('photo.ogg')
+math.randomseed(os.time())
 
 guy = Guy.new()
-whitebird = Whitebird.new(1100, 100)
+birbs = {Whitebird.new(1100, 100)}
 
 background = love.graphics.newImage('background2.png')
 tower = love.graphics.newImage('tower.png')
+
+timer = 0
+
+function values(t)
+    local i = 0
+    return function() i = i + 1; return t[i] end
+end
 
 function love.update(dt)
     if love.mouse.isDown(1) then
         cameraSound:play()
     end
 
-    whitebird:fly(dt)
+    timer = timer + dt;
+
+    if (timer > 2) then
+        timer = 0
+    end
+
+    if timer == 0 then
+        local whitebird = Whitebird.new(1100, math.random(0, 400))
+        table.insert(birbs, whitebird)
+    end
+
+    for birb in values(birbs) do
+        birb:fly(dt)
+    end
+
 end
 
 function love.draw(dt)
@@ -25,5 +47,8 @@ function love.draw(dt)
     love.graphics.draw(guy.img, guy.position.x, guy.position.y)
 
     love.graphics.draw(tower, 300, 170)
-    love.graphics.draw(whitebird.image, whitebird.frame, whitebird.posX, whitebird.posY)
+
+    for birb in values(birbs) do
+        love.graphics.draw(birb.image, birb.frame, birb.posX, birb.posY)
+    end
 end
