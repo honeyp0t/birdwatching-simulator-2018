@@ -38,22 +38,39 @@ Guy.new = function()
 
 
     function self:update(dt)
-        self.lookingAngle = self.lookingAngle + 3.1415 * dt
+        self.lookingAngle = self.lookingAngle + 3.1415 * 0.1 * dt
+        if self.lookingAngle > 2 * math.pi then
+            self.lookingAngle = self.lookingAngle - 2 * math.pi
+        end
+        if self.lookingAngle < 0 then
+            self.lookingAngle = self.lookingAngle + 2 * math.pi
+        end
 
         self.lookAtPoint = {
             x = self.midpoint.x + math.cos(self.lookingAngle) * 200,
             y = self.midpoint.y + math.sin(self.lookingAngle) * 200
         }
 
-        self.cone.vertex2x = self.midpoint.x + math.cos(self.lookingAngle + 0.1) * 200
-        self.cone.vertex2y = self.midpoint.y + math.sin(self.lookingAngle + 0.1) * 200
+        self.cone.vertex2x = self.midpoint.x + math.cos(-self.lookingAngle + 0.2) * 200
+        self.cone.vertex2y = self.midpoint.y + math.sin(-self.lookingAngle + 0.2) * 200
 
-        self.cone.vertex3x = self.midpoint.x + math.cos(self.lookingAngle - 0.1) * 200
-        self.cone.vertex3y = self.midpoint.y + math.sin(self.lookingAngle - 0.1) * 200
+        self.cone.vertex3x = self.midpoint.x + math.cos(-self.lookingAngle - 0.2) * 200
+        self.cone.vertex3y = self.midpoint.y + math.sin(-self.lookingAngle - 0.2) * 200
+    end
+    
+    function self:angleToBird(bird)
+        return math.atan2(self.position.y - bird.posY, bird.posX - self.position.x)
     end
 
     function self:canSeeBird(bird)
-        
+        local angleToBird = self:angleToBird(bird)
+        local distanceX = (bird.posX - self.position.x)
+        local distanceY = (bird.posY - self.position.y)
+        local distanceToBird = math.sqrt(distanceX*distanceX + distanceY*distanceY)
+        if math.abs(self.lookingAngle - angleToBird) < 0.2 and distanceToBird < 200 then
+            return true
+        end
+        return false
     end
 
     return self

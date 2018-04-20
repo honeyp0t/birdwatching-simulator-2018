@@ -11,6 +11,7 @@ background = love.graphics.newImage('background2.png')
 tower = love.graphics.newImage('tower.png')
 
 timer = 0
+birdsSeen = 0
 
 function values(t)
     local i = 0
@@ -18,6 +19,7 @@ function values(t)
 end
 
 function love.update(dt)
+    birdsSeen = 0
     guy:update(dt)
 
     if love.mouse.isDown(1) then
@@ -37,6 +39,9 @@ function love.update(dt)
 
     for birb in values(birbs) do
         birb:fly(dt)
+        if guy:canSeeBird(birb) then
+            birdsSeen = birdsSeen + 1
+        end
     end
 
 end
@@ -50,11 +55,20 @@ function love.draw(dt)
 
     love.graphics.draw(tower, 300, 170)    
 
+    love.graphics.setColor(255, 0, 0, 100)
+    if birdsSeen > 0 then
+        love.graphics.setColor(0, 255, 0, 100)
+    end
     love.graphics.polygon('fill', guy.cone.vertex1x, guy.cone.vertex1y,
         guy.cone.vertex2x, guy.cone.vertex2y,
         guy.cone.vertex3x, guy.cone.vertex3y)
+    love.graphics.setColor(255, 255, 255, 255)
 
     for birb in values(birbs) do
         love.graphics.draw(birb.image, birb.frame, birb.posX, birb.posY)
     end
+
+    love.graphics.print(guy:angleToBird(birbs[1]), 20, 20)
+    love.graphics.print(guy.lookingAngle, 20, 40)
+    love.graphics.print(math.abs(guy.lookingAngle - guy:angleToBird(birbs[1])), 20, 60)
 end
