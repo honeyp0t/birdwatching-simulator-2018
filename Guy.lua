@@ -38,7 +38,10 @@ Guy.new = function()
 
 
     function self:update(dt)
-        self.lookingAngle = self.lookingAngle + 3.1415 * 0.1 * dt
+        local mouseX = love.mouse.getX()
+        local mouseY = love.mouse.getY()
+
+        self.lookingAngle = math.atan2(self.position.y - mouseY, mouseX - self.position.x)
         if self.lookingAngle > 2 * math.pi then
             self.lookingAngle = self.lookingAngle - 2 * math.pi
         end
@@ -51,11 +54,11 @@ Guy.new = function()
             y = self.midpoint.y + math.sin(self.lookingAngle) * 200
         }
 
-        self.cone.vertex2x = self.midpoint.x + math.cos(-self.lookingAngle + 0.2) * 200
-        self.cone.vertex2y = self.midpoint.y + math.sin(-self.lookingAngle + 0.2) * 200
+        self.cone.vertex2x = self.midpoint.x + math.cos(-self.lookingAngle + 0.2) * 400
+        self.cone.vertex2y = self.midpoint.y + math.sin(-self.lookingAngle + 0.2) * 400
 
-        self.cone.vertex3x = self.midpoint.x + math.cos(-self.lookingAngle - 0.2) * 200
-        self.cone.vertex3y = self.midpoint.y + math.sin(-self.lookingAngle - 0.2) * 200
+        self.cone.vertex3x = self.midpoint.x + math.cos(-self.lookingAngle - 0.2) * 400
+        self.cone.vertex3y = self.midpoint.y + math.sin(-self.lookingAngle - 0.2) * 400
     end
     
     function self:angleToBird(bird)
@@ -67,7 +70,7 @@ Guy.new = function()
         local distanceX = (bird.posX - self.position.x)
         local distanceY = (bird.posY - self.position.y)
         local distanceToBird = math.sqrt(distanceX*distanceX + distanceY*distanceY)
-        if math.abs(self.lookingAngle - angleToBird) < 0.2 and distanceToBird < 200 then
+        if math.abs(self.lookingAngle - angleToBird) < 0.2 and distanceToBird < 400 then
             return true
         end
         return false

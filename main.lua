@@ -13,6 +13,7 @@ tower = love.graphics.newImage('tower.png')
 timer = 0
 
 birdsSeen = 0
+timeSinceClick = 0
 
 score = 0
 
@@ -25,9 +26,7 @@ function love.update(dt)
     birdsSeen = 0
     guy:update(dt)
 
-    if love.mouse.isDown(1) then
-        cameraSound:play()
-    end
+    
 
     timer = timer + dt;
 
@@ -45,6 +44,14 @@ function love.update(dt)
         if guy:canSeeBird(birb) then
             birdsSeen = birdsSeen + 1
         end
+    end
+
+    timeSinceClick = timeSinceClick + dt
+    if love.mouse.isDown(1) and timeSinceClick > 1 then
+        cameraSound:play()
+
+        score = score + birdsSeen
+        timeSinceClick = 0
     end
 
 end
@@ -72,8 +79,4 @@ function love.draw(dt)
     for birb in values(birbs) do
         love.graphics.draw(birb.image, birb.frame, birb.posX, birb.posY)
     end
-
-    love.graphics.print(guy:angleToBird(birbs[1]), 20, 20)
-    love.graphics.print(guy.lookingAngle, 20, 40)
-    love.graphics.print(math.abs(guy.lookingAngle - guy:angleToBird(birbs[1])), 20, 60)
 end
