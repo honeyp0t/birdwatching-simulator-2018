@@ -27,6 +27,8 @@ Whitebird.new = function(x, y)
 end
 
 function love.update(dt)
+    guy:update(dt)
+
     if love.mouse.isDown(1) then
         cameraSound:play()
     end
@@ -43,4 +45,10 @@ function love.draw(dt)
 
     love.graphics.draw(tower, 300, 170)
     love.graphics.draw(bird.image, bird.posX, bird.posY)
+
+    
+
+    love.graphics.polygon('fill', guy.cone.vertex1x, guy.cone.vertex1y,
+        guy.cone.vertex2x, guy.cone.vertex2y,
+        guy.cone.vertex3x, guy.cone.vertex3y)
 end
