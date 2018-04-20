@@ -24,12 +24,12 @@ function love.update(dt)
 
     timer = timer + dt;
 
-    if (timer > 2) then
+    if (timer > math.random(1, 4)) then
         timer = 0
     end
 
     if timer == 0 then
-        local whitebird = Whitebird.new(1100, math.random(0, 400))
+        local whitebird = Whitebird.new(1100, math.random(0, 350))
         table.insert(birbs, whitebird)
     end
 
