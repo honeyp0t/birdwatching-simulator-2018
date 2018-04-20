@@ -11,6 +11,7 @@ background = love.graphics.newImage('background2.png')
 tower = love.graphics.newImage('tower.png')
 
 timer = 0
+score = 0
 
 function values(t)
     local i = 0
@@ -43,6 +44,8 @@ function love.draw(dt)
     love.graphics.clear(100, 200, 255)
 
     love.graphics.draw(background, 0, 0)
+
+    love.graphics.print("Score: " .. score, 10, 465, 0, 2, 2)
 
     love.graphics.draw(guy.img, guy.position.x, guy.position.y)
 
