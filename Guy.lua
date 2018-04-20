@@ -11,8 +11,8 @@ Guy.new = function()
     setmetatable(self, Guy)
     
     self.position = {
-        x = 400,
-        y = 200
+        x = 350,
+        y = 173
     }
 
     self.img = guyImages[1]
