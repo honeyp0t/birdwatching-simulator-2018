@@ -1,29 +1,20 @@
 require("Guy")
+require("Whitebird")
 
 cameraSound = love.audio.newSource('photo.ogg')
+math.randomseed(os.time())
 
 guy = Guy.new()
+birbs = {Whitebird.new(1100, 100)}
 
 background = love.graphics.newImage('background2.png')
 tower = love.graphics.newImage('tower.png')
-bird1 = love.graphics.newImage('bird1.png');
 
-Whitebird = {}
-Whitebird.__index = Whitebird
-Whitebird.new = function(x, y) 
-    local self = {}
-    setmetatable(self, Whitebird)
+timer = 0
 
-    self.posX = x
-    self.posY = y
-    self.image = bird1
-    local frames = {}
-
-    frames[1] = love.graphics.newQuad(0,0,33,35,bird1:getDimensions())
-    frames[2] = love.graphics.newQuad(33,0,33,35,bird1:getDimensions())
-    frames[3] = love.graphics.newQuad(66,0,33,35,bird1:getDimensions())
-
-    return self
+function values(t)
+    local i = 0
+    return function() i = i + 1; return t[i] end
 end
 
 function love.update(dt)
@@ -32,9 +23,23 @@ function love.update(dt)
     if love.mouse.isDown(1) then
         cameraSound:play()
     end
-end
 
-bird = Whitebird.new(100, 100)
+    timer = timer + dt;
+
+    if (timer > 2) then
+        timer = 0
+    end
+
+    if timer == 0 then
+        local whitebird = Whitebird.new(1100, math.random(0, 400))
+        table.insert(birbs, whitebird)
+    end
+
+    for birb in values(birbs) do
+        birb:fly(dt)
+    end
+
+end
 
 function love.draw(dt)
     love.graphics.clear(100, 200, 255)
@@ -43,12 +48,13 @@ function love.draw(dt)
 
     love.graphics.draw(guy.img, guy.position.x, guy.position.y)
 
-    love.graphics.draw(tower, 300, 170)
-    love.graphics.draw(bird.image, bird.posX, bird.posY)
-
-    
+    love.graphics.draw(tower, 300, 170)    
 
     love.graphics.polygon('fill', guy.cone.vertex1x, guy.cone.vertex1y,
         guy.cone.vertex2x, guy.cone.vertex2y,
         guy.cone.vertex3x, guy.cone.vertex3y)
+
+    for birb in values(birbs) do
+        love.graphics.draw(birb.image, birb.frame, birb.posX, birb.posY)
+    end
 end
