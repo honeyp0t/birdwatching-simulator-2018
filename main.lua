@@ -11,7 +11,10 @@ background = love.graphics.newImage('background2.png')
 tower = love.graphics.newImage('tower.png')
 
 timer = 0
+
 birdsSeen = 0
+
+score = 0
 
 function values(t)
     local i = 0
@@ -28,12 +31,12 @@ function love.update(dt)
 
     timer = timer + dt;
 
-    if (timer > 2) then
+    if (timer > math.random(1, 4)) then
         timer = 0
     end
 
     if timer == 0 then
-        local whitebird = Whitebird.new(1100, math.random(0, 400))
+        local whitebird = Whitebird.new(1100, math.random(0, 350))
         table.insert(birbs, whitebird)
     end
 
@@ -50,6 +53,8 @@ function love.draw(dt)
     love.graphics.clear(100, 200, 255)
 
     love.graphics.draw(background, 0, 0)
+
+    love.graphics.print("Score: " .. score, 10, 465, 0, 2, 2)
 
     love.graphics.draw(guy.img, guy.position.x, guy.position.y)
 
