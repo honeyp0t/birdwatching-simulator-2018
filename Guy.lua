@@ -1,7 +1,7 @@
 guyImages = {
-    love.graphics.newImage('guy.png'),
-    love.graphics.newImage('guy_right.png'),
-    love.graphics.newImage('guy_left.png')
+    love.graphics.newImage('assets/guy.png'),
+    love.graphics.newImage('assets/guy_right.png'),
+    love.graphics.newImage('assets/guy_left.png')
 }
 
 Guy = {}
@@ -47,6 +47,13 @@ Guy.new = function()
         end
         if self.lookingAngle < 0 then
             self.lookingAngle = self.lookingAngle + 2 * math.pi
+        end
+        if self.lookingAngle > math.pi * 0.66 then
+            self.img = guyImages[3]
+        elseif self.lookingAngle < math.pi * 0.33 then
+            self.img = guyImages[2]
+        else
+            self.img = guyImages[1]
         end
 
         self.lookAtPoint = {

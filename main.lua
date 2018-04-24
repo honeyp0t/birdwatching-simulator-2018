@@ -1,14 +1,14 @@
 require("Guy")
 require("Whitebird")
 
-cameraSound = love.audio.newSource('photo.ogg')
+cameraSound = love.audio.newSource('assets/photo.ogg', 'static')
 math.randomseed(os.time())
 
 guy = Guy.new()
 birbs = {Whitebird.new(1100, 100)}
 
-background = love.graphics.newImage('background2.png')
-tower = love.graphics.newImage('tower.png')
+background = love.graphics.newImage('assets/background2.png')
+tower = love.graphics.newImage('assets/tower.png')
 
 timer = 0
 
