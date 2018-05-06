@@ -1,10 +1,10 @@
 math.randomseed(os.time())
 
-Whitebird = {}
-Whitebird.__index = Whitebird
-Whitebird.new = function(x, y) 
+Bird = {}
+Bird.__index = Bird
+Bird.new = function(x, y) 
     local self = {}
-    setmetatable(self, Whitebird)
+    setmetatable(self, Bird)
 
     local frames = {}
 

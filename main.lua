@@ -1,5 +1,5 @@
 require("Guy")
-require("Whitebird")
+require("Bird")
 require("Menu")
 
 cameraSound = love.audio.newSource('assets/photo.ogg', 'static')
@@ -7,7 +7,7 @@ math.randomseed(os.time())
 
 guy = Guy.new()
 menu = Menu.new()
-birbs = {Whitebird.new(1100, 100)}
+birbs = {Bird.new(1100, 100)}
 
 background = love.graphics.newImage('assets/background2.png')
 tower = love.graphics.newImage('assets/tower.png')
@@ -58,8 +58,8 @@ function love.update(dt)
         end
 
         if timer == 0 then
-            local whitebird = Whitebird.new(1100, math.random(0, 350))
-            table.insert(birbs, whitebird)
+            local birb = Bird.new(1100, math.random(0, 350))
+            table.insert(birbs, birb)
         end
 
         for birb in values(birbs) do
