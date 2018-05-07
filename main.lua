@@ -7,7 +7,6 @@ math.randomseed(os.time())
 
 guy = Guy.new()
 menu = Menu.new()
-birbs = {Bird.new(1100, 100)}
 
 background = love.graphics.newImage('assets/background2.png')
 tower = love.graphics.newImage('assets/tower.png')
@@ -20,6 +19,7 @@ function values(t)
 end
 
 function resetGameState()
+    birbs = {Bird.new(1100, 100)}
     timer = 0
 
     birdsSeen = 0
