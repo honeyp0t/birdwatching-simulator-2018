@@ -15,19 +15,16 @@ Menu.new = function()
 
         if (activeSelection == 1) then
             love.graphics.setColor(155, 155, 255, 255)
-            love.graphics.print("Start game", 340, 165, 0, 2, 2)
-        else
-            love.graphics.print("Start game", 340, 165, 0, 2, 2)            
         end
+
+        love.graphics.print("Start game", 340, 165, 0, 2, 2)            
 
         love.graphics.setColor(255, 255, 255, 255)
 
         if (activeSelection == 2) then
             love.graphics.setColor(155, 155, 255, 255)
-            love.graphics.print("Highscores (not implemented lul)", 340, 265, 0, 2, 2)
-        else
-            love.graphics.print("Highscores (not implemented lul)", 340, 265, 0, 2, 2)
         end
+        love.graphics.print("Highscores (not implemented lul)", 340, 265, 0, 2, 2)
         love.graphics.setColor(255, 255, 255, 255)
 
     end
