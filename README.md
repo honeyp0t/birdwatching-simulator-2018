@@ -6,6 +6,8 @@ Bird Watching Simulator 2018 is a realistic adrenaline inducing ornithology game
 
 This game runs on [löve](https://love2d.org). You need to install it and add it to your PATH. On mac, assuming you have [homebrew](https://brew.sh/index) installed, do `brew cask install love`.
 
+Tested on löve 11.1
+
 Start the game by going into the repo and running `love .`
 
 ## development todos

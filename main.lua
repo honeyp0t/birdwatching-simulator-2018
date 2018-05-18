@@ -104,14 +104,14 @@ function love.draw(dt)
 
         love.graphics.draw(tower, 300, 170)    
 
-        love.graphics.setColor(255, 0, 0, 100)
+        love.graphics.setColor(1, 0, 0, 100/255)
         if birdsSeen > 0 then
-            love.graphics.setColor(0, 255, 0, 100)
+            love.graphics.setColor(0, 1, 0, 100/255)
         end
         love.graphics.polygon('fill', guy.cone.vertex1x, guy.cone.vertex1y,
             guy.cone.vertex2x, guy.cone.vertex2y,
             guy.cone.vertex3x, guy.cone.vertex3y)
-        love.graphics.setColor(255, 255, 255, 255)
+        love.graphics.setColor(1, 1, 1, 1)
 
         for birb in values(birbs) do
             love.graphics.draw(birb.image, birb.frame, birb.posX, birb.posY)

@@ -10,22 +10,24 @@ Menu.new = function()
     local timeSinceKeypress = 0
 
     function self:drawMenu()
+	
+        love.graphics.setColor(1/255, 76/255, 2/255)
+		love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())	
 
-        love.graphics.clear(100, 200, 255)
-
+        love.graphics.setColor(1, 1, 1)
         if (activeSelection == 1) then
-            love.graphics.setColor(155, 155, 255, 255)
+            love.graphics.setColor(0, 1, 1)
         end
 
         love.graphics.print("Start game", 340, 165, 0, 2, 2)            
 
-        love.graphics.setColor(255, 255, 255, 255)
+        love.graphics.setColor(1, 1, 1)
 
         if (activeSelection == 2) then
-            love.graphics.setColor(155, 155, 255, 255)
+            love.graphics.setColor(0, 1, 1)
         end
         love.graphics.print("Highscores (not implemented lul)", 340, 265, 0, 2, 2)
-        love.graphics.setColor(255, 255, 255, 255)
+        love.graphics.setColor(1/255, 76/255, 2/255)
 
     end
 
