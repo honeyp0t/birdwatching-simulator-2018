@@ -19,12 +19,19 @@ Bird.new = function(x, y)
     frames[2] = love.graphics.newQuad(33,0,33,35,birbs[birdIndex]:getDimensions())
     frames[3] = love.graphics.newQuad(66,0,33,35,birbs[birdIndex]:getDimensions())
 
+    
     self.frameIndex = 1
     self.posX = x
     self.speedX = math.random(60, 300)
     self.posY = y
     self.image = birbs[birdIndex]
     self.frame = frames[1]
+
+    if (x > 0) then
+        self.speedX = math.random(60, 300)
+    else
+        self.speedX = math.random(-60, -300)
+    end
     
     function self:fly(dt)
         self.frameIndex = self.frameIndex + 1 * dt * 4
