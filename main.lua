@@ -19,7 +19,7 @@ function values(t)
 end
 
 function resetGameState()
-    birbs = {Bird.new(1100, 100)}
+    birbs = {Bird.new(love.graphics.getWidth(), 100)}
     timer = 0
 
     birdsSeen = 0
@@ -58,8 +58,18 @@ function love.update(dt)
         end
 
         if timer == 0 then
-            local birb = Bird.new(1100, math.random(0, 350))
-            table.insert(birbs, birb)
+            generateBirb()
+        end
+
+        function generateBirb()
+            -- left 1, right 2
+            local randomSide = math.random(2);
+
+            if(randomSide == 2) then
+                table.insert(birbs, Bird.new(love.graphics.getWidth(), math.random(0, 350)))
+            else
+                table.insert(birbs, Bird.new(-100, math.random(0, 350)))
+            end
         end
 
         for birb in values(birbs) do
