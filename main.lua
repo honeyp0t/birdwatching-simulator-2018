@@ -23,7 +23,7 @@ function resetGameState()
     timer = 0
 
     birdsSeen = 0
-    timeSinceClick = 0
+    timeSinceClick = 1
     
     gameStartTime = 0
     score = 0    
@@ -121,6 +121,12 @@ function love.draw(dt)
         love.graphics.polygon('fill', guy.cone.vertex1x, guy.cone.vertex1y,
             guy.cone.vertex2x, guy.cone.vertex2y,
             guy.cone.vertex3x, guy.cone.vertex3y)
+
+        love.graphics.setColor(1, 1, 1, (1 - timeSinceClick))
+        love.graphics.polygon('fill', guy.cone.vertex1x, guy.cone.vertex1y,
+            guy.cone.vertex2x, guy.cone.vertex2y,
+            guy.cone.vertex3x, guy.cone.vertex3y)
+
         love.graphics.setColor(1, 1, 1, 1)
 
         for birb in values(birbs) do
