@@ -12,10 +12,8 @@ Start the game by going into the repo and running `love .`
 
 ## development todos
 
-- Fåglar från höger och vänster
 - Nya fågeltyper
   - Rarity
-  - Olika poäng för olika fågeltyper
 - Maps/stages
   - Nattbana
   - Stadsbana

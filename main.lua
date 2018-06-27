@@ -22,7 +22,7 @@ function resetGameState()
     birbs = {Bird.new(love.graphics.getWidth(), 100)}
     timer = 0
 
-    birdsSeen = 0
+    birdsSeen = {}
     timeSinceClick = 1
     
     gameStartTime = 0
@@ -48,7 +48,7 @@ function love.update(dt)
             return
         end
 
-        birdsSeen = 0
+        birdsSeen = {}
         guy:update(dt)
 
         timer = timer + dt;
@@ -75,7 +75,7 @@ function love.update(dt)
         for birb in values(birbs) do
             birb:fly(dt)
             if guy:canSeeBird(birb) then
-                birdsSeen = birdsSeen + 1
+                table.insert(birdsSeen, birb)
             end
         end
 
@@ -83,7 +83,13 @@ function love.update(dt)
         if love.mouse.isDown(1) and timeSinceClick > 1 then
             cameraSound:play()
 
-            score = score + birdsSeen
+            points = {}
+
+            for birb in values(birdsSeen) do
+                birb:isPhotographed(dt)
+                score = score + birb:getValue()
+            end
+
             timeSinceClick = 0
         end
     else
@@ -91,7 +97,7 @@ function love.update(dt)
     end
 end
 
-function love.draw(dt)
+function love.draw()
 
     if (menu.isInGame) then
 
@@ -115,7 +121,7 @@ function love.draw(dt)
         love.graphics.draw(tower, 300, 170)    
 
         love.graphics.setColor(1, 0, 0, 100/255)
-        if birdsSeen > 0 then
+        if #birdsSeen > 0 then
             love.graphics.setColor(0, 1, 0, 100/255)
         end
         love.graphics.polygon('fill', guy.cone.vertex1x, guy.cone.vertex1y,
@@ -130,8 +136,9 @@ function love.draw(dt)
         love.graphics.setColor(1, 1, 1, 1)
 
         for birb in values(birbs) do
-            love.graphics.draw(birb.image, birb.frame, birb.posX, birb.posY)
+            birb:draw()
         end
+
     else
         menu:drawMenu()
     end
