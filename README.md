@@ -25,3 +25,4 @@ Start the game by going into the repo and running `love .`
 - Flockar
 - Spara foton
 - WASD-movement
+- Birds can shit on your car moments after you washed it 

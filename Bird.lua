@@ -35,6 +35,7 @@ Bird.new = function(x, y)
         self.speedX = math.random(-60, -300)
     end
 
+    -- Number of points that the bird is worth
     function self:getValue() 
         return self.value
     end
@@ -44,7 +45,12 @@ Bird.new = function(x, y)
     end
 
     function self:draw(dt) 
-        love.graphics.draw(self.image, self.frame, self.posX, self.posY)
+
+        if self.speedX > 0 then
+            love.graphics.draw(self.image, self.frame, self.posX, self.posY)
+        else
+            love.graphics.draw(self.image, self.frame, self.posX, self.posY, 0, -1, 1)
+        end
         local r, g, b, a = love.graphics.getColor()
 
         if self.lastPhotographed < 2 then
