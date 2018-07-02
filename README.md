@@ -13,7 +13,6 @@ Start the game by going into the repo and running `love .`
 ## development todos
 
 - Nya fågeltyper
-  - Rarity
 - Maps/stages
   - Nattbana
   - Stadsbana

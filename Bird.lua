@@ -10,30 +10,44 @@ Bird.new = function(x, y)
 
     local birdIndex = math.random(1, 2)
 
-    local birbs = {
-        love.graphics.newImage('assets/bird1.png'),
-        love.graphics.newImage('assets/bird2.png')
-    }
+    local loadBird = function(spritesheetRef, numFrames, birdValue, minimumBirdSpeed, maximumBirdSpeed)
+        local img = love.graphics.newImage(spritesheetRef)
+        local frames = {}
+        local spriteWidth, spriteHeight = img:getDimensions()
 
-    frames[1] = love.graphics.newQuad(0,0,33,35,birbs[birdIndex]:getDimensions())
-    frames[2] = love.graphics.newQuad(33,0,33,35,birbs[birdIndex]:getDimensions())
-    frames[3] = love.graphics.newQuad(66,0,33,35,birbs[birdIndex]:getDimensions())
+        for i = 1, numFrames do
+            frames[i] = love.graphics.newQuad((i - 1) * (spriteWidth / numFrames), 0, spriteWidth / numFrames, spriteHeight, img:getDimensions())
+        end
 
+        self.image = img
+        self.frames = frames
+        self.frameIndex = 1
+        self.totalFrames = numFrames
+        self.frame = self.frames[self.frameIndex]
+        self.value = birdValue
+
+        self.speedX = math.random(minimumBirdSpeed, maximumBirdSpeed)
+        if x < 0 then
+            self.speedX = -1 * self.speedX
+        end
     
-    self.frameIndex = 1
-    self.posX = x
-    self.speedX = math.random(60, 300)
-    self.posY = y
-    self.image = birbs[birdIndex]
-    self.frame = frames[1]
-    self.lastPhotographed = 999
-    self.value = birdIndex
-
-    if (x > 0) then
-        self.speedX = math.random(60, 300)
-    else
-        self.speedX = math.random(-60, -300)
     end
+
+    local birdProbability = math.random(1, 100)
+
+    if birdProbability < 1 then -- 1% chance bird wow
+        loadBird('assets/owl.png', 3, 5, 100, 250)
+    elseif birdProbability < 10 then -- play freebird
+        loadBird('assets/small-blue-bird.png', 3, 3, 250, 350)
+    elseif birdProbability < 50 then -- pretty common bird
+        loadBird('assets/bird2.png', 3, 2, 80, 300)
+    else -- shitbird for commonfolk
+        loadBird('assets/bird1.png', 3, 1, 60, 300)
+    end
+    
+    self.posX = x
+    self.posY = y
+    self.lastPhotographed = 999
 
     -- Number of points that the bird is worth
     function self:getValue() 
@@ -53,8 +67,9 @@ Bird.new = function(x, y)
         end
         local r, g, b, a = love.graphics.getColor()
 
-        if self.lastPhotographed < 2 then
-            local spriteMidPointExceptImLazy = 8
+        if self.lastPhotographed < 2 then -- print point indicator
+            local imgWidth = self.image:getDimensions()
+            local spriteMidPoint = (imgWidth / self.totalFrames) / 2 - 8
             local yellowWithAlpha = {
                 1,
                 1,
@@ -62,7 +77,7 @@ Bird.new = function(x, y)
                 1.5 - self.lastPhotographed
             }
             love.graphics.setColor(yellowWithAlpha)
-            love.graphics.print(self:getValue(), self.posX + spriteMidPointExceptImLazy, self.posY - 20 - (self.lastPhotographed * 20), 0, 2, 2)
+            love.graphics.print(self:getValue(), self.posX + spriteMidPoint, self.posY - 20 - (self.lastPhotographed * 20), 0, 2, 2)
         end
 
         love.graphics.setColor(r, g, b, a)
@@ -70,7 +85,7 @@ Bird.new = function(x, y)
     
     function self:fly(dt)
         self.frameIndex = self.frameIndex + 1 * dt * 4
-        self.frame = frames[(math.floor(self.frameIndex) % 2) + 1]
+        self.frame = self.frames[(math.floor(self.frameIndex) % (self.totalFrames)) + 1]
         self.posX = self.posX - (self.speedX * dt)
 
         self.lastPhotographed = self.lastPhotographed + dt
