@@ -43,7 +43,7 @@ Menu.new = function()
             timeSinceKeypress = 0
         end
 
-        if love.keyboard.isDown("return") then
+        if love.keyboard.isDown("return") or love.keyboard.isDown("kpenter") then
             self.isInGame = true
         end
     end

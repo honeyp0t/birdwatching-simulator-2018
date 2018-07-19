@@ -16,6 +16,10 @@ FrenchFry.new = function(world)
         self.body:setAngle(math.random()*2*math.pi)
         frenchFry.body:applyForce(x_vel, y_vel)
     end
+	
+	self.resetLifetime = function()
+		self.lifetime = 5.0
+	end
 
     self.kill = function()
         self.body:setActive(false)

@@ -122,6 +122,7 @@ function love.update(dt)
 
         timeSinceThrowFries = timeSinceThrowFries + dt
         if love.keyboard.isDown("space") and timeSinceThrowFries > 1 then
+
             for i=0, 4, 1 do
                 frenchFry = physicsObjects.frenchFries[frenchFryCounter + i]
                 shootAngle = guy.lookingAngle + math.random()-0.5
@@ -134,7 +135,8 @@ function love.update(dt)
 
         for i=#physicsObjects.activeFrenchFries, 1, -1 do
             if physicsObjects.activeFrenchFries[i].update(dt) == false then
-                physicsObjects.activeFrenchFries[i]:kill()
+                --physicsObjects.activeFrenchFries[i]:kill()
+				physicsObjects.activeFrenchFries[i].resetLifetime()
                 table.remove(physicsObjects.activeFrenchFries, i)
             end
         end
