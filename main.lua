@@ -1,6 +1,7 @@
 require("Guy")
 require("Bird")
 require("Menu")
+require("FrenchFry")
 
 cameraSound = love.audio.newSource('assets/photo.ogg', 'static')
 math.randomseed(os.time())
@@ -12,6 +13,12 @@ background = love.graphics.newImage('assets/background2.png')
 tower = love.graphics.newImage('assets/tower.png')
 
 GAME_LENGTH_SECONDS = 10
+PIXELS_PER_METER = 16
+MAX_FRENCH_FRIES = 100
+
+physicsObjects = {}
+world = {}
+frenchFryCounter = 1
 
 function values(t)
     local i = 0
@@ -24,6 +31,7 @@ function resetGameState()
 
     birdsSeen = {}
     timeSinceClick = 1
+    timeSinceThrowFries = 1
     
     gameStartTime = 0
     score = 0    
@@ -31,9 +39,28 @@ end
 
 resetGameState()
 
+function love.load()
+    love.physics.setMeter(PIXELS_PER_METER)
+    world = love.physics.newWorld(0, 9.81*PIXELS_PER_METER, true)
+
+    physicsObjects.ground = {}
+    physicsObjects.ground.body = love.physics.newBody(world, love.graphics.getWidth()/2, love.graphics.getHeight()-120/2)
+    physicsObjects.ground.shape = love.physics.newRectangleShape(love.graphics.getWidth(), 120)
+    physicsObjects.ground.fixture = love.physics.newFixture(physicsObjects.ground.body, physicsObjects.ground.shape)
+
+    physicsObjects.frenchFries = {}
+    physicsObjects.activeFrenchFries = {}
+    for i=0,MAX_FRENCH_FRIES,1 do
+        frenchFry = FrenchFry.new(world)
+        table.insert(physicsObjects.frenchFries, frenchFry)
+    end
+end
+
 function love.update(dt)
 
     if (menu.isInGame) then
+        world:update(dt)
+
         if love.keyboard.isDown("escape") then 
             menu.isInGame = false
             resetGameState()
@@ -92,6 +119,27 @@ function love.update(dt)
 
             timeSinceClick = 0
         end
+
+        timeSinceThrowFries = timeSinceThrowFries + dt
+        if love.keyboard.isDown("space") and timeSinceThrowFries > 1 then
+
+            for i=0, 4, 1 do
+                frenchFry = physicsObjects.frenchFries[frenchFryCounter + i]
+                shootAngle = guy.lookingAngle + math.random()-0.5
+                frenchFry.spawn(guy.position.x, guy.position.y, math.cos(shootAngle) * 10000.0, -math.sin(shootAngle) * 10000.0)
+                table.insert(physicsObjects.activeFrenchFries, frenchFry)
+            end
+            frenchFryCounter = (frenchFryCounter + 5) % MAX_FRENCH_FRIES
+            timeSinceThrowFries = 0
+        end
+
+        for i=#physicsObjects.activeFrenchFries, 1, -1 do
+            if physicsObjects.activeFrenchFries[i].update(dt) == false then
+                --physicsObjects.activeFrenchFries[i]:kill()
+				physicsObjects.activeFrenchFries[i].resetLifetime()
+                table.remove(physicsObjects.activeFrenchFries, i)
+            end
+        end
     else
         menu:update(dt)
     end
@@ -132,13 +180,18 @@ function love.draw()
         love.graphics.polygon('fill', guy.cone.vertex1x, guy.cone.vertex1y,
             guy.cone.vertex2x, guy.cone.vertex2y,
             guy.cone.vertex3x, guy.cone.vertex3y)
-
         love.graphics.setColor(1, 1, 1, 1)
 
         for birb in values(birbs) do
             birb:draw()
         end
-
+        
+        love.graphics.setColor(1.0, 1.0, 0.0)
+        for frenchFry in values(physicsObjects.activeFrenchFries) do
+            frenchFry:draw()
+        end
+        love.graphics.setColor(1, 1, 1, 1)
+            
     else
         menu:drawMenu()
     end
