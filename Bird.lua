@@ -8,8 +8,6 @@ Bird.new = function(x, y)
 
     local frames = {}
 
-    local birdIndex = math.random(1, 2)
-
     local loadBird = function(spritesheetRef, numFrames, birdValue, minimumBirdSpeed, maximumBirdSpeed)
         local img = love.graphics.newImage(spritesheetRef)
         local frames = {}

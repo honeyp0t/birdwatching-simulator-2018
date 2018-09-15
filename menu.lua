@@ -1,3 +1,6 @@
+theme = love.audio.newSource('assets/themesong.mp3', 'static')
+math.randomseed(os.time())
+
 Menu = {}
 Menu.__index = Menu
 Menu.new = function()
@@ -35,6 +38,22 @@ Menu.new = function()
 
         timeSinceKeypress = timeSinceKeypress + dt
 
+        if not theme:isPlaying() then
+            theme:setLooping(true)
+            theme:setVolume(0.8)
+            local pitches = {
+                0.5,
+                0.8,
+                1,
+                1,
+                1.2,
+                1.5
+            }
+            local pitch = pitches[math.random(1, #pitches)]
+            theme:setPitch(pitch)
+            theme:play()
+        end
+
         if love.keyboard.isDown("down") and timeSinceKeypress > 0.3 then
             activeSelection = activeSelection + 1
             if (activeSelection > 2) then
@@ -45,6 +64,7 @@ Menu.new = function()
 
         if love.keyboard.isDown("return") or love.keyboard.isDown("kpenter") then
             self.isInGame = true
+            theme:stop()
         end
     end
 
