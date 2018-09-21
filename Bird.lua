@@ -33,7 +33,7 @@ Bird.new = function(x, y)
 
     local birdProbability = math.random(1, 100)
 
-    if birdProbability < 1 then -- 1% chance bird wow
+    if birdProbability == 1 then -- 1% chance bird wow
         loadBird('assets/owl.png', 3, 5, 100, 250)
     elseif birdProbability < 10 then -- play freebird
         loadBird('assets/small-blue-bird.png', 3, 3, 250, 350)
