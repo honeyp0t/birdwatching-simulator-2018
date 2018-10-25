@@ -8,5 +8,7 @@ magpie
 
 https://commons.wikimedia.org/wiki/File:A_natural_history_of_birds_(Numb._XV)_(9238332015).jpg
 
-font:
+fonts:
 https://www.dafont.com/games.font
+
+https://www.dafont.com/old-sans-black.font

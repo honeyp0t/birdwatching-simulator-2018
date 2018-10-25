@@ -30,6 +30,8 @@ Menu.new = function()
         end
 
         local font = love.graphics.newFont('assets/Games.ttf', 30)
+        font:setFilter( "nearest", "nearest" )
+
         local startGameText = love.graphics.newText(font, "Start game")
         love.graphics.draw(startGameText, 40, 165, 0, 2, 2)
         --love.graphics.print("Start game", 340, 165, 0, 2, 2)            

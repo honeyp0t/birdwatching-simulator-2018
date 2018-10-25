@@ -11,6 +11,8 @@ menu = Menu.new()
 
 background = love.graphics.newImage('assets/background2.png')
 tower = love.graphics.newImage('assets/tower.png')
+local font = love.graphics.newFont('assets/OldSansBlack.ttf', 14)
+font:setFilter( "nearest", "nearest" )
 
 GAME_LENGTH_SECONDS = 10
 PIXELS_PER_METER = 16
@@ -23,6 +25,11 @@ frenchFryCounter = 1
 function values(t)
     local i = 0
     return function() i = i + 1; return t[i] end
+end
+
+function fontPrint(text, x, y, a, b, c)
+    local endScoreText = love.graphics.newText(font, text)
+    love.graphics.draw(endScoreText, x, y, a, b, c)
 end
 
 function resetGameState()
@@ -151,8 +158,8 @@ function love.draw()
 
         if (gameStartTime + GAME_LENGTH_SECONDS) - love.timer.getTime() <= 0 then
 
-            love.graphics.print("End score: " .. score, 330, 165, 0, 2, 2)
-            love.graphics.print("Press escape to return to menu", 330, 265, 0, 2, 2)
+            fontPrint("End score: " .. score, 330, 165, 0, 2, 2)
+            fontPrint("Press escape to return to menu", 330, 265, 0, 2, 2)
             return
         end
 
@@ -160,9 +167,9 @@ function love.draw()
 
         love.graphics.draw(background, 0, 0)
 
-        love.graphics.print("Score: " .. score, 10, 465, 0, 2, 2)
+        fontPrint("Score: " .. score, 10, 465, 0, 2, 2)
 
-        love.graphics.print("Time left: " .. math.floor((gameStartTime + GAME_LENGTH_SECONDS) - love.timer.getTime() +0.5), 10, 10, 0, 2, 2)
+        fontPrint("Time left: " .. math.floor((gameStartTime + GAME_LENGTH_SECONDS) - love.timer.getTime() +0.5), 10, 10, 0, 2, 2)
 
         love.graphics.draw(guy.img, guy.position.x, guy.position.y)
 
