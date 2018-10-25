@@ -2,6 +2,7 @@ require("Guy")
 require("Bird")
 require("Menu")
 require("FrenchFry")
+local utf8 = require("utf8")
 
 cameraSound = love.audio.newSource('assets/photo.ogg', 'static')
 math.randomseed(os.time())
@@ -19,6 +20,8 @@ MAX_FRENCH_FRIES = 100
 physicsObjects = {}
 world = {}
 frenchFryCounter = 1
+highscoreName = ''
+gameStateScreenshots = {}
 
 function values(t)
     local i = 0
@@ -35,11 +38,13 @@ function resetGameState()
     
     gameStartTime = 0
     score = 0    
+    gameStateSnapshots = {}
 end
 
 resetGameState()
 
 function love.load()
+    love.filesystem.setIdentity("birdwatching_simulator_2018")
     love.physics.setMeter(PIXELS_PER_METER)
     world = love.physics.newWorld(0, 9.81*PIXELS_PER_METER, true)
 
@@ -54,6 +59,25 @@ function love.load()
         frenchFry = FrenchFry.new(world)
         table.insert(physicsObjects.frenchFries, frenchFry)
     end
+end
+
+function love.textinput(key)
+    if isGameOver() then
+        if key == "backspace" then
+            highscoreName = ""
+        end
+        highscoreName = highscoreName .. key;
+    end
+end
+
+function submitHighscore()
+    local i = 1
+    for screenshot in values(gameStateScreenshots) do
+        screenshot.encode("snapshot" .. i .. ".png")
+        i = i + 1
+    end
+
+    print("Muthafucka " .. highscoreName .. " got highscore " .. score)
 end
 
 function love.update(dt)
@@ -71,7 +95,17 @@ function love.update(dt)
             gameStartTime = love.timer.getTime()
         end
 
-        if (gameStartTime + GAME_LENGTH_SECONDS) - love.timer.getTime() <= 0 then
+        if isGameOver() then
+            if love.keyboard.isDown("backspace") then
+                highscoreName = ''--string.sub(highscoreName, 1, - 1)
+            elseif love.keyboard.isDown("return") then
+                if menu.isInGame == true then
+                    submitHighscore()
+                    resetGameState()
+                end
+                menu.isInGame = false
+                return
+            end
             return
         end
 
@@ -117,6 +151,9 @@ function love.update(dt)
                 score = score + birb:getValue()
             end
 
+            love.graphics.captureScreenshot("gamestate_" .. love.timer.getTime() .. ".png")
+            --table.insert(gameStateScreenshots, love.graphics.newScreenshot())
+
             timeSinceClick = 0
         end
 
@@ -145,15 +182,23 @@ function love.update(dt)
     end
 end
 
+function isGameOver() 
+    return (gameStartTime + GAME_LENGTH_SECONDS) - love.timer.getTime() <= 0
+end
+
 function love.draw()
 
     if (menu.isInGame) then
 
-        if (gameStartTime + GAME_LENGTH_SECONDS) - love.timer.getTime() <= 0 then
+        if isGameOver() then
 
             love.graphics.print("End score: " .. score, 330, 165, 0, 2, 2)
-            love.graphics.print("Press escape to return to menu", 330, 265, 0, 2, 2)
+
+            love.graphics.print("ENTER NAME: " .. highscoreName, 330, 265, 0, 2, 2)
+
+            love.graphics.print("Press escape to return to menu", 330, 365, 0, 2, 2)
             return
+
         end
 
         love.graphics.clear(100, 200, 255)

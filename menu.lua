@@ -87,8 +87,10 @@ Menu.new = function()
             timeSinceKeypress = 0
         end
 
-        if love.keyboard.isDown("return") or love.keyboard.isDown("kpenter") then
+        if (love.keyboard.isDown("return") or love.keyboard.isDown("kpenter")) and timeSinceKeypress > 0.3 then
             self.isInGame = true
+            print("Rart game..")
+            timeSinceKeypress = 0
             theme:stop()
         end
     end
