@@ -18,6 +18,9 @@ GAME_LENGTH_SECONDS = 10
 PIXELS_PER_METER = 16
 MAX_FRENCH_FRIES = 100
 
+TOWER_X=300
+TOWER_Y=170
+
 physicsObjects = {}
 world = {}
 frenchFryCounter = 1
@@ -39,7 +42,10 @@ function resetGameState()
     birdsSeen = {}
     timeSinceClick = 1
     timeSinceThrowFries = 1
-    
+    frenchFryCounter = 0
+
+    guy.position.x = TOWER_X + 50
+
     gameStartTime = 0
     score = 0    
 end
@@ -147,6 +153,18 @@ function love.update(dt)
                 table.remove(physicsObjects.activeFrenchFries, i)
             end
         end
+
+        -- Movement
+        if love.keyboard.isDown("right") then
+            if guy.position.x < tower:getWidth()+TOWER_X-50 then
+                guy.position.x = guy.position.x + 3
+            end
+        end
+        if love.keyboard.isDown("left") then
+            if guy.position.x > TOWER_X+30 then
+                guy.position.x = guy.position.x - 3
+            end
+        end
     else
         menu:update(dt)
     end
@@ -167,18 +185,20 @@ function love.draw()
 
         love.graphics.draw(background, 0, 0)
 
+        fontPrint("Fries: " .. frenchFryCounter, 10, 435, 0, 2, 2)
         fontPrint("Score: " .. score, 10, 465, 0, 2, 2)
 
         fontPrint("Time left: " .. math.floor((gameStartTime + GAME_LENGTH_SECONDS) - love.timer.getTime() +0.5), 10, 10, 0, 2, 2)
 
         love.graphics.draw(guy.img, guy.position.x, guy.position.y)
 
-        love.graphics.draw(tower, 300, 170)    
+        love.graphics.draw(tower, TOWER_X, TOWER_Y)
 
         love.graphics.setColor(1, 0, 0, 100/255)
         if #birdsSeen > 0 then
             love.graphics.setColor(0, 1, 0, 100/255)
         end
+
         love.graphics.polygon('fill', guy.cone.vertex1x, guy.cone.vertex1y,
             guy.cone.vertex2x, guy.cone.vertex2y,
             guy.cone.vertex3x, guy.cone.vertex3y)
