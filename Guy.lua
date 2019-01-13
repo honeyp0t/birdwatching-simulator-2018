@@ -41,6 +41,11 @@ Guy.new = function()
         local mouseX = love.mouse.getX()
         local mouseY = love.mouse.getY()
 
+        self.midpoint = {
+            x = self.position.x + self.img:getWidth()/2,
+            y = self.position.y + self.img:getHeight()/2
+        }
+
         self.lookingAngle = math.atan2(self.position.y - mouseY, mouseX - self.position.x)
         if self.lookingAngle > 2 * math.pi then
             self.lookingAngle = self.lookingAngle - 2 * math.pi
@@ -60,6 +65,9 @@ Guy.new = function()
             x = self.midpoint.x + math.cos(self.lookingAngle) * 200,
             y = self.midpoint.y + math.sin(self.lookingAngle) * 200
         }
+
+        self.cone.vertex1x = self.midpoint.x
+        self.cone.vertex1y = self.midpoint.y
 
         self.cone.vertex2x = self.midpoint.x + math.cos(-self.lookingAngle + 0.2) * 400
         self.cone.vertex2y = self.midpoint.y + math.sin(-self.lookingAngle + 0.2) * 400
