@@ -12,7 +12,7 @@ Guy.new = function()
     
     self.position = {
         x = 350,
-        y = 173
+        y = 265
     }
     self.img = guyImages[1]
 

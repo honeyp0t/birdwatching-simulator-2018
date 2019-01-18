@@ -10,7 +10,7 @@ guy = Guy.new()
 menu = Menu.new()
 
 background = love.graphics.newImage('assets/background2.png')
-tower = love.graphics.newImage('assets/tower.png')
+tower = love.graphics.newImage('assets/tower2.png')
 local font = love.graphics.newFont('assets/OldSansBlack.ttf', 14)
 font:setFilter( "nearest", "nearest" )
 
@@ -172,8 +172,8 @@ function love.draw()
         fontPrint("Time left: " .. math.floor((gameStartTime + GAME_LENGTH_SECONDS) - love.timer.getTime() +0.5), 10, 10, 0, 2, 2)
 
         love.graphics.draw(guy.img, guy.position.x, guy.position.y)
-
-        love.graphics.draw(tower, 300, 170)    
+        
+        love.graphics.draw(tower, 310, 250)    
 
         love.graphics.setColor(1, 0, 0, 100/255)
         if #birdsSeen > 0 then
