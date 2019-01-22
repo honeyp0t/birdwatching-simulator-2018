@@ -77,7 +77,8 @@ Guy.new = function()
         local distanceX = (bird.posX - self.position.x)
         local distanceY = (bird.posY - self.position.y)
         local distanceToBird = math.sqrt(distanceX*distanceX + distanceY*distanceY)
-        if math.abs(self.lookingAngle - angleToBird) < 0.2 and distanceToBird < 400 then
+        local angleDiff = math.fmod(self.lookingAngle - angleToBird + (math.pi*3), math.pi*2) - math.pi
+        if math.abs(angleDiff) < 0.2 and distanceToBird < 400 then
             return true
         end
         return false
