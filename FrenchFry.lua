@@ -8,6 +8,7 @@ FrenchFry.new = function(world)
     self.body:setActive(false)
     self.shape = love.physics.newRectangleShape(0, 0, 5, 20)
     self.fixture = love.physics.newFixture(self.body, self.shape, 1)
+    self.fixture:setUserData("frenchfry")
     self.lifetime = 5.0
 
     self.spawn = function(x, y, x_vel, y_vel)
