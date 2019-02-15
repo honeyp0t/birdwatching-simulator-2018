@@ -2,12 +2,14 @@ require("Guy")
 require("Bird")
 require("Menu")
 require("FrenchFry")
+require("DayNightCycle")
 
 cameraSound = love.audio.newSource('assets/photo.ogg', 'static')
 math.randomseed(os.time())
 
 guy = Guy.new()
 menu = Menu.new()
+dayNightCycle = DayNightCycle.new()
 
 background = love.graphics.newImage('assets/background2.png')
 tower = love.graphics.newImage('assets/tower2.png')
@@ -167,10 +169,6 @@ function love.draw()
 
         love.graphics.draw(background, 0, 0)
 
-        fontPrint("Score: " .. score, 10, 465, 0, 2, 2)
-
-        fontPrint("Time left: " .. math.floor((gameStartTime + GAME_LENGTH_SECONDS) - love.timer.getTime() +0.5), 10, 10, 0, 2, 2)
-
         love.graphics.draw(guy.img, guy.position.x, guy.position.y)
         
         love.graphics.draw(tower, 310, 250)    
@@ -197,8 +195,15 @@ function love.draw()
         for frenchFry in values(physicsObjects.activeFrenchFries) do
             frenchFry:draw()
         end
+
+        dayNightCycle.draw()
+ 
+
         love.graphics.setColor(1, 1, 1, 1)
-            
+        fontPrint("Score: " .. score, 10, 465, 0, 2, 2)
+
+        fontPrint("Time left: " .. math.floor((gameStartTime + GAME_LENGTH_SECONDS) - love.timer.getTime() +0.5), 10, 10, 0, 2, 2)
+         
     else
         menu:drawMenu()
     end
