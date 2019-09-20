@@ -72,7 +72,7 @@ function love.load()
     physicsObjects.ladder.body = love.physics.newBody(world, 310+32, 250+64+25)
     physicsObjects.ladder.shape = love.physics.newRectangleShape(8, 100)
     physicsObjects.ladder.fixture = love.physics.newFixture(physicsObjects.ladder.body, physicsObjects.ladder.shape)
-    physicsObjects.ladder.fixture:setUserData({type = "ground"})
+    physicsObjects.ladder.fixture:setUserData({type = "ladder"})
 
     physicsObjects.frenchFries = {}
     physicsObjects.activeFrenchFries = {}
@@ -88,7 +88,7 @@ function love.update(dt)
 
     if (menu.isInGame) then
         world:update(dt)
-        local contactList = world:getContactList()
+        --[[local contactList = world:getContactList()
         for contact in values(contactList) do
             local a,b = contact:getFixtures()
             
@@ -104,7 +104,7 @@ function love.update(dt)
             if guyFixture ~= nil and groundFixture ~= nil then
                 guy:collideWorld(groundFixture, contact)
             end
-        end
+        end]]
 
         if love.keyboard.isDown("escape") then 
             menu.isInGame = false
@@ -206,12 +206,16 @@ function love.draw()
         love.graphics.draw(background, 0, 0)
 
         fontPrint("Score: " .. score, 10, 465, 0, 2, 2)
+        fontPrint("velY: " .. guy.velocity.y, 10, 445, 0, 2, 2)
 
         fontPrint("Time left: " .. math.floor((gameStartTime + GAME_LENGTH_SECONDS) - love.timer.getTime() +0.5), 10, 10, 0, 2, 2)
 
         guy:draw()
         
-        love.graphics.draw(tower, 310, 250)    
+        love.graphics.draw(tower, 310, 250)
+        if guy.climbingLadder then
+            guy:draw()
+        end  
 
         love.graphics.setColor(1, 0, 0, 100/255)
         if #birdsSeen > 0 then

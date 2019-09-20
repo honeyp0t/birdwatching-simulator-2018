@@ -1,7 +1,8 @@
 guyImages = {
     love.graphics.newImage('assets/guy.png'),
     love.graphics.newImage('assets/guy_right.png'),
-    love.graphics.newImage('assets/guy_left.png')
+    love.graphics.newImage('assets/guy_left.png'),
+    love.graphics.newImage('assets/guy_climb.png')
 }
 
 Guy = {}
@@ -28,6 +29,7 @@ Guy.new = function(world)
     self.hasReachedMax = false
     self.jumpAcceleration = 2000
     self.jumpMaxSpeed = 90
+    self.touchingLadder = false
 
     self.body = love.physics.newBody(world, 0, 0, "dynamic")
     self.shape = love.physics.newRectangleShape(9, 10, 18, 20)
@@ -57,9 +59,37 @@ Guy.new = function(world)
     }
 
     function self:reset()
+        self.isJumping = false
+        self.isGrounded = false
+        self.touchingLadder = false
+        self.climbingLadder = false
+        self.hasReachedMax = false
     end
 
     function self:update(dt)
+        self.touchingLadder = false
+        self.climbingLadder = false
+        local contactList = self.body:getContacts()
+        for contact in values(contactList) do
+            local a,b = contact:getFixtures()
+            local aUserData = a:getUserData()
+            local bUserData = b:getUserData()
+            local guyFixture = nil
+            local groundFixture = nil
+            local ladderFixture = nil
+            if aUserData.type == "ground" then groundFixture = a
+            elseif bUserData.type == "ground" then groundFixture = b end
+            if aUserData.type == "ladder" then ladderFixture = a
+            elseif bUserData.type == "ladder" then ladderFixture = b end
+
+            if groundFixture ~= nil then
+                self:collideWorld(groundFixture, contact)
+            end
+            if ladderFixture ~= nil then
+                self:collideLadder(ladderFixture)
+            end
+        end
+
         if love.keyboard.isDown("left", "a") and self.velocity.x > -self.maxSpeed then
             if self.velocity.x > 0 then 
                 self.velocity.x = self.velocity.x * (1 - math.min(dt * self.friction, 1))
@@ -78,13 +108,27 @@ Guy.new = function(world)
             end
         end
         if love.keyboard.isDown("up", "w") then
-            if -self.velocity.y < self.jumpMaxSpeed and not self.hasReachedMax then
-                self.velocity.y = self.velocity.y - self.jumpAcceleration * dt
-            elseif math.abs(self.velocity.y) > self.jumpMaxSpeed then
-                self.hasReachedMax = true
-            end
+            if self.touchingLadder then
+                self.velocity.y = -50
+                self.climbingLadder = true
+                self.isGrounded = false
+            else
+                if -self.velocity.y < self.jumpMaxSpeed and not self.hasReachedMax then
+                    self.velocity.y = self.velocity.y - self.jumpAcceleration * dt
+                elseif math.abs(self.velocity.y) > self.jumpMaxSpeed then
+                    self.hasReachedMax = true
+                end
 
-            self.isGrounded = false
+                self.isGrounded = false
+            end
+        end
+
+        --apply gravity
+        if not self.grounded and not self.climbingLadder then
+            self.velocity.y = self.velocity.y + self.gravity * dt
+        end
+        if self.grounded then
+            self.velocity.y = 0
         end
 
         --apply speed
@@ -92,19 +136,9 @@ Guy.new = function(world)
         self.position.y = self.position.y + self.velocity.y * dt
 
         --apply air friction
-        self.velocity.y = self.velocity.y * (1 - math.min(dt * self.airFriction, 1)) 
+        --self.velocity.y = self.velocity.y * (1 - math.min(dt * self.airFriction, 1)) 
 
-        --apply gravity
-        self.velocity.y = self.velocity.y + self.gravity * dt
-
-        --check ground collision
-        --if self.position.y > 360 then
-        --    self.position.y = 360
-        --    self.velocity.y = 0
-        --    self.isGrounded = true
-        --    self.hasReachedMax = false
-        --end
-
+        
         --move physics collider (as of now just cosmetic)
         self.body:setPosition(self.position.x, self.position.y)
         self.body:setLinearVelocity(0, 0)
@@ -137,6 +171,9 @@ Guy.new = function(world)
         else
             self.img = guyImages[1]
         end
+        if self.climbingLadder then
+            self.img = guyImages[4]
+        end
 
         self.lookAtPoint = {
             x = self.midpoint.x + math.cos(self.lookingAngle) * 200,
@@ -167,9 +204,19 @@ Guy.new = function(world)
     end
 
     function self:collideWorld(fixture, contact)
-        self.velocity.y = 0
-        self.isGrounded = true
-        self.hasReachedMax = false
+        if self.velocity.y >= 0 then
+            shape = fixture:getShape()
+            x1, y1, x2, y2, x3, y3, x4, y4 = shape:getPoints()
+            fy = fixture:getBody():getY()
+            self.isGrounded = true
+            self.hasReachedMax = false
+            self.velocity.y = 0
+            self.position.y = fy + y2 - self.img:getHeight() - 2
+        end
+    end
+
+    function self:collideLadder(fixture)
+        self.touchingLadder = true
     end
 
     function self:draw()
