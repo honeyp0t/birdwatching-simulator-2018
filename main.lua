@@ -206,7 +206,6 @@ function love.draw()
         love.graphics.draw(background, 0, 0)
 
         fontPrint("Score: " .. score, 10, 465, 0, 2, 2)
-        fontPrint("velY: " .. guy.velocity.y, 10, 445, 0, 2, 2)
 
         fontPrint("Time left: " .. math.floor((gameStartTime + GAME_LENGTH_SECONDS) - love.timer.getTime() +0.5), 10, 10, 0, 2, 2)
 
