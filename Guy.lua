@@ -58,14 +58,6 @@ Guy.new = function(world)
         vertex3y = 0
     }
 
-    function self:reset()
-        self.isJumping = false
-        self.isGrounded = false
-        self.touchingLadder = false
-        self.climbingLadder = false
-        self.hasReachedMax = false
-    end
-
     function self:update(dt)
         self.touchingLadder = false
         self.climbingLadder = false
@@ -204,10 +196,10 @@ Guy.new = function(world)
     end
 
     function self:collideWorld(fixture, contact)
+        shape = fixture:getShape()
+        x1, y1, x2, y2, x3, y3, x4, y4 = shape:getPoints()
+        fy = fixture:getBody():getY()
         if self.velocity.y >= 0 then
-            shape = fixture:getShape()
-            x1, y1, x2, y2, x3, y3, x4, y4 = shape:getPoints()
-            fy = fixture:getBody():getY()
             self.isGrounded = true
             self.hasReachedMax = false
             self.velocity.y = 0

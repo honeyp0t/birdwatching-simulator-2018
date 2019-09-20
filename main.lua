@@ -19,7 +19,7 @@ MAX_FRENCH_FRIES = 100
 
 physicsObjects = {}
 world = {}
-guy = {}
+guy = nil
 frenchFryCounter = 1
 
 function values(t)
@@ -42,11 +42,10 @@ function resetGameState()
     
     gameStartTime = 0
     score = 0
-    guy.position = {
-        x = 100,
-        y = 300
-    }
-    guy.isGrounded = false
+    
+    if guy ~= nil then
+        guy = Guy.new(world)
+    end
 end
 
 resetGameState()
