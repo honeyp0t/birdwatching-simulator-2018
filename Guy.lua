@@ -1,9 +1,37 @@
+require("Sprite")
+require("SpriteAnimation")
+require("SpriteAnimationFrame")
+
 guyImages = {
     love.graphics.newImage('assets/guy.png'),
     love.graphics.newImage('assets/guy_right.png'),
     love.graphics.newImage('assets/guy_left.png'),
     love.graphics.newImage('assets/guy_climb.png')
 }
+
+guyimg = love.graphics.newImage('assets/Alex Jospeh Sheet.png')
+
+guy_idleAnimation = SpriteAnimation.new()
+guy_idleAnimation:addFrame(SpriteAnimationFrame.new(guyimg, 0, 2, 17, 20, 1))
+
+guy_walkLeftAnimation = SpriteAnimation.new()
+guy_walkLeftAnimation:addFrame(SpriteAnimationFrame.new(guyimg, 54, 25, 15, 20, 0.1))
+guy_walkLeftAnimation:addFrame(SpriteAnimationFrame.new(guyimg, 71, 25, 15, 20, 0.1))
+
+guy_walkRightAnimation = SpriteAnimation.new()
+guy_walkRightAnimation:addFrame(SpriteAnimationFrame.new(guyimg, 71, 2, 15, 20, 0.1))
+guy_walkRightAnimation:addFrame(SpriteAnimationFrame.new(guyimg, 54, 2, 15, 20, 0.1))
+
+guy_climbAnimation = SpriteAnimation.new()
+guy_climbAnimation:addFrame(SpriteAnimationFrame.new(guyimg, 1, 48, 15, 20, 0.1))
+guy_climbAnimation:addFrame(SpriteAnimationFrame.new(guyimg, 20, 48, 15, 20, 0.1))
+
+guySprite = Sprite.new(guyimg)
+guySprite.animations.idle = guy_idleAnimation
+guySprite.animations.walkLeft = guy_walkLeftAnimation
+guySprite.animations.walkRight = guy_walkRightAnimation
+guySprite.animations.climb = guy_climbAnimation
+guySprite.currentAnimation = guySprite.animations.walkLeft
 
 Guy = {}
 Guy.__index = Guy
@@ -19,6 +47,10 @@ Guy.new = function(world)
         x = 0,
         y = 0
     }
+    self.size = {
+        x = 18,
+        y = 20
+    }
     self.acceleration = 800
     self.maxSpeed = 200
     self.friction = 20
@@ -32,11 +64,12 @@ Guy.new = function(world)
     self.touchingLadder = false
 
     self.body = love.physics.newBody(world, 0, 0, "dynamic")
-    self.shape = love.physics.newRectangleShape(9, 10, 18, 20)
+    self.shape = love.physics.newRectangleShape(9, 10, self.size.x, self.size.y)
     self.fixture = love.physics.newFixture(self.body, self.shape, 100)
     self.fixture:setUserData({type = "guy", object = self})
 
     self.img = guyImages[1]
+    self.sprite = guySprite
 
     self.midpoint = {
         x = self.position.x + self.img:getWidth()/2,
@@ -59,6 +92,7 @@ Guy.new = function(world)
     }
 
     function self:update(dt)
+        self.sprite.currentAnimation = self.sprite.animations.idle
         self.touchingLadder = false
         self.climbingLadder = false
         local contactList = self.body:getContacts()
@@ -87,11 +121,13 @@ Guy.new = function(world)
                 self.velocity.x = self.velocity.x * (1 - math.min(dt * self.friction, 1))
             end
             self.velocity.x = self.velocity.x - self.acceleration * dt
+            self.sprite.currentAnimation = self.sprite.animations.walkLeft
         elseif love.keyboard.isDown("right", "d") and self.velocity.x < self.maxSpeed then
             if self.velocity.x < 0 then 
                 self.velocity.x = self.velocity.x * (1 - math.min(dt * self.friction, 1))
             end
             self.velocity.x = self.velocity.x + self.acceleration * dt
+            self.sprite.currentAnimation = self.sprite.animations.walkRight
         else
             if self.isGrounded then
                 self.velocity.x = self.velocity.x * (1 - math.min(dt * self.friction, 1))
@@ -139,8 +175,8 @@ Guy.new = function(world)
 
         --update values that are defined by position
         self.midpoint = {
-            x = self.position.x + self.img:getWidth()/2,
-            y = self.position.y + self.img:getHeight()/2
+            x = self.position.x + self.size.x/2,
+            y = self.position.y + self.size.y/2
         }
         self.cone.vertex1x = self.midpoint.x
         self.cone.vertex1y = self.midpoint.y
@@ -156,15 +192,9 @@ Guy.new = function(world)
         if self.lookingAngle < 0 then
             self.lookingAngle = self.lookingAngle + 2 * math.pi
         end
-        if self.lookingAngle > math.pi * 0.66 then
-            self.img = guyImages[3]
-        elseif self.lookingAngle < math.pi * 0.33 then
-            self.img = guyImages[2]
-        else
-            self.img = guyImages[1]
-        end
+
         if self.climbingLadder then
-            self.img = guyImages[4]
+            self.sprite.currentAnimation = self.sprite.animations.climb
         end
 
         self.lookAtPoint = {
@@ -177,6 +207,8 @@ Guy.new = function(world)
 
         self.cone.vertex3x = self.midpoint.x + math.cos(-self.lookingAngle - 0.2) * 400
         self.cone.vertex3y = self.midpoint.y + math.sin(-self.lookingAngle - 0.2) * 400
+
+        self.sprite:update(dt)
     end
     
     function self:angleToBird(bird)
@@ -212,8 +244,8 @@ Guy.new = function(world)
     end
 
     function self:draw()
-        love.graphics.draw(self.img, self.position.x, self.position.y)
         --love.graphics.polygon("fill", self.body:getWorldPoints(self.shape:getPoints()))
+        love.graphics.draw(self.sprite.image, self.sprite:getQuad(), self.position.x, self.position.y)
     end
 
     return self

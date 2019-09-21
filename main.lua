@@ -50,7 +50,8 @@ end
 
 resetGameState()
 
-function love.load()
+function love.load(arg)
+    if arg[#arg] == "-debug" then require("mobdebug").start() end
     love.physics.setMeter(PIXELS_PER_METER)
     world = love.physics.newWorld(0, 9.81*PIXELS_PER_METER, true)
     world:setCallbacks(beginContact, endContact, preSolve, postSolve)
