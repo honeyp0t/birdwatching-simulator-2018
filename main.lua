@@ -6,7 +6,6 @@ require("FrenchFry")
 cameraSound = love.audio.newSource('assets/photo.ogg', 'static')
 math.randomseed(os.time())
 
-guy = Guy.new()
 menu = Menu.new()
 
 background = love.graphics.newImage('assets/background2.png')
@@ -20,6 +19,7 @@ MAX_FRENCH_FRIES = 100
 
 physicsObjects = {}
 world = {}
+guy = nil
 frenchFryCounter = 1
 
 function values(t)
@@ -41,19 +41,38 @@ function resetGameState()
     timeSinceThrowFries = 1
     
     gameStartTime = 0
-    score = 0    
+    score = 0
+    
+    if guy ~= nil then
+        guy = Guy.new(world)
+    end
 end
 
 resetGameState()
 
-function love.load()
+function love.load(arg)
+    if arg[#arg] == "-debug" then require("mobdebug").start() end
     love.physics.setMeter(PIXELS_PER_METER)
     world = love.physics.newWorld(0, 9.81*PIXELS_PER_METER, true)
+    world:setCallbacks(beginContact, endContact, preSolve, postSolve)
 
     physicsObjects.ground = {}
     physicsObjects.ground.body = love.physics.newBody(world, love.graphics.getWidth()/2, love.graphics.getHeight()-120/2)
     physicsObjects.ground.shape = love.physics.newRectangleShape(love.graphics.getWidth(), 120)
     physicsObjects.ground.fixture = love.physics.newFixture(physicsObjects.ground.body, physicsObjects.ground.shape)
+    physicsObjects.ground.fixture:setUserData({type = "ground"})
+
+    physicsObjects.towerFloor = {}
+    physicsObjects.towerFloor.body = love.physics.newBody(world, 310+32, 250+64-24)
+    physicsObjects.towerFloor.shape = love.physics.newRectangleShape(54, 8)
+    physicsObjects.towerFloor.fixture = love.physics.newFixture(physicsObjects.towerFloor.body, physicsObjects.towerFloor.shape)
+    physicsObjects.towerFloor.fixture:setUserData({type = "ground"})
+
+    physicsObjects.ladder = {}
+    physicsObjects.ladder.body = love.physics.newBody(world, 310+32, 250+64+25)
+    physicsObjects.ladder.shape = love.physics.newRectangleShape(8, 100)
+    physicsObjects.ladder.fixture = love.physics.newFixture(physicsObjects.ladder.body, physicsObjects.ladder.shape)
+    physicsObjects.ladder.fixture:setUserData({type = "ladder"})
 
     physicsObjects.frenchFries = {}
     physicsObjects.activeFrenchFries = {}
@@ -61,12 +80,31 @@ function love.load()
         frenchFry = FrenchFry.new(world)
         table.insert(physicsObjects.frenchFries, frenchFry)
     end
+
+    guy = Guy.new(world)
 end
 
 function love.update(dt)
 
     if (menu.isInGame) then
         world:update(dt)
+        --[[local contactList = world:getContactList()
+        for contact in values(contactList) do
+            local a,b = contact:getFixtures()
+            
+            local aUserData = a:getUserData()
+            local bUserData = b:getUserData()
+            local guyFixture = nil
+            local groundFixture = nil
+            if aUserData.type == "guy" then guyFixture = a
+            elseif bUserData.type == "guy" then guyFixture = b end
+            if aUserData.type == "ground" then groundFixture = a
+            elseif bUserData.type == "ground" then groundFixture = b end
+
+            if guyFixture ~= nil and groundFixture ~= nil then
+                guy:collideWorld(groundFixture, contact)
+            end
+        end]]
 
         if love.keyboard.isDown("escape") then 
             menu.isInGame = false
@@ -171,9 +209,12 @@ function love.draw()
 
         fontPrint("Time left: " .. math.floor((gameStartTime + GAME_LENGTH_SECONDS) - love.timer.getTime() +0.5), 10, 10, 0, 2, 2)
 
-        love.graphics.draw(guy.img, guy.position.x, guy.position.y)
+        guy:draw()
         
-        love.graphics.draw(tower, 310, 250)    
+        love.graphics.draw(tower, 310, 250)
+        if guy.climbingLadder then
+            guy:draw()
+        end  
 
         love.graphics.setColor(1, 0, 0, 100/255)
         if #birdsSeen > 0 then
@@ -199,7 +240,24 @@ function love.draw()
         end
         love.graphics.setColor(1, 1, 1, 1)
             
+        --love.graphics.polygon("fill", physicsObjects.ladder.body:getWorldPoints(physicsObjects.ladder.shape:getPoints()))
     else
         menu:drawMenu()
     end
+end
+
+function beginContact(a, b, coll)
+
+end
+ 
+function endContact(a, b, coll)
+ 
+end
+ 
+function preSolve(a, b, coll)
+
+end
+ 
+function postSolve(a, b, coll, normalimpulse, tangentimpulse)
+ 
 end
