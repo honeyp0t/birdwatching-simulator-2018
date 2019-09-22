@@ -2,13 +2,6 @@ require("Sprite")
 require("SpriteAnimation")
 require("SpriteAnimationFrame")
 
-guyImages = {
-    love.graphics.newImage('assets/guy.png'),
-    love.graphics.newImage('assets/guy_right.png'),
-    love.graphics.newImage('assets/guy_left.png'),
-    love.graphics.newImage('assets/guy_climb.png')
-}
-
 guyimg = love.graphics.newImage('assets/Alex Jospeh Sheet.png')
 
 guy_idleAnimation = SpriteAnimation.new()
@@ -68,12 +61,11 @@ Guy.new = function(world)
     self.fixture = love.physics.newFixture(self.body, self.shape, 100)
     self.fixture:setUserData({type = "guy", object = self})
 
-    self.img = guyImages[1]
     self.sprite = guySprite
 
     self.midpoint = {
-        x = self.position.x + self.img:getWidth()/2,
-        y = self.position.y + self.img:getHeight()/2
+        x = self.position.x + self.size.x/2,
+        y = self.position.y + self.size.y/2
     }
 
     self.lookingAngle = 0
@@ -162,10 +154,6 @@ Guy.new = function(world)
         --apply speed
         self.position.x = self.position.x + self.velocity.x * dt
         self.position.y = self.position.y + self.velocity.y * dt
-
-        --apply air friction
-        --self.velocity.y = self.velocity.y * (1 - math.min(dt * self.airFriction, 1)) 
-
         
         --move physics collider (as of now just cosmetic)
         self.body:setPosition(self.position.x, self.position.y)
@@ -231,11 +219,12 @@ Guy.new = function(world)
         shape = fixture:getShape()
         x1, y1, x2, y2, x3, y3, x4, y4 = shape:getPoints()
         fy = fixture:getBody():getY()
-        if self.velocity.y >= 0 then
+        print(y1)
+        if self.velocity.y >= 0 and self.midpoint.y + 5 <= fy + y2 then
             self.isGrounded = true
             self.hasReachedMax = false
             self.velocity.y = 0
-            self.position.y = fy + y2 - self.img:getHeight() - 2
+            self.position.y = fy + y2 - self.size.y - 2
         end
     end
 
